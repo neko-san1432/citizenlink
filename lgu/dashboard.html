@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LGU Dashboard - CitizenLink</title>
+    <link rel="stylesheet" href="../css/styles.css">
+    <link rel="stylesheet" href="../css/additional-styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="dashboard-container">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <i class="fas fa-shield-alt"></i>
+                    <span>CitizenLink</span>
+                    <span class="badge">LGU</span>
+                </div>
+                <button class="sidebar-close" id="sidebar-close">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <nav class="sidebar-nav">
+                <ul>
+                    <li>
+                        <a href="dashboard.html" class="active">
+                            <i class="fas fa-home"></i>
+                            <span>Dashboard</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="complaints.html">
+                            <i class="fas fa-file-alt"></i>
+                            <span>Complaints</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="heatmap.html">
+                            <i class="fas fa-map-marked-alt"></i>
+                            <span>Heatmap</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="insights.html">
+                            <i class="fas fa-chart-line"></i>
+                            <span>Insights</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+            <div class="sidebar-footer">
+                <div class="user-menu">
+                    <button class="user-menu-btn">
+                        <i class="fas fa-user"></i>
+                        <span id="user-name">Admin User</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+                    <div class="user-dropdown">
+                        <span class="dropdown-label">City Administration</span>
+                        <a href="#" id="logout-btn" class="text-danger">
+                            <i class="fas fa-sign-out-alt"></i>
+                            <span>Log out</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <div class="main-content">
+            <header class="dashboard-header">
+                <button class="sidebar-toggle" id="sidebar-toggle">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <div class="header-right">
+                    <span class="welcome-text">LGU Admin Portal</span>
+                </div>
+            </header>
+
+            <main class="dashboard-main">
+                <div class="page-header">
+                    <h2>LGU Dashboard</h2>
+                    <p class="text-muted">Overview of all citizen complaints and their status.</p>
+                </div>
+
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <h3>Total Complaints</h3>
+                            <i class="fas fa-file-alt"></i>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-value" id="total-complaints">0</div>
+                            <p class="text-muted">All complaints received</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <h3>Pending</h3>
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-value" id="pending-complaints">0</div>
+                            <p class="text-muted">Awaiting assignment</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <h3>In Progress</h3>
+                            <i class="fas fa-spinner"></i>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-value" id="in-progress-complaints">0</div>
+                            <p class="text-muted">Being addressed</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <h3>Resolved</h3>
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-value" id="resolved-complaints">0</div>
+                            <p class="text-muted">Successfully completed</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="charts-grid">
+                    <div class="chart-card">
+                        <div class="card-header">
+                            <h3>Complaint Overview</h3>
+                            <p class="text-muted">Distribution of complaints by status</p>
+                        </div>
+                        <div class="card-content">
+                            <canvas id="complaints-chart"></canvas>
+                        </div>
+                    </div>
+                    <div class="chart-card">
+                        <div class="card-header">
+                            <h3>Performance Metrics</h3>
+                            <p class="text-muted">Response and resolution times</p>
+                        </div>
+                        <div class="card-content">
+                            <div class="progress-container">
+                                <div class="progress-header">
+                                    <span>Average Response Time</span>
+                                    <span id="avg-response-time">0 hours</span>
+                                </div>
+                                <div class="progress">
+                                    <div class="progress-bar" id="response-time-progress" style="width: 0%"></div>
+                                </div>
+                                <div class="progress-labels">
+                                    <span>Target: 24 hours</span>
+                                </div>
+                            </div>
+                            <div class="progress-container">
+                                <div class="progress-header">
+                                    <span>Resolution Rate</span>
+                                    <span id="resolution-rate">0%</span>
+                                </div>
+                                <div class="progress">
+                                    <div class="progress-bar" id="resolution-rate-progress" style="width: 0%"></div>
+                                </div>
+                                <div class="progress-labels">
+                                    <span>Target: 90%</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="charts-grid">
+                    <div class="chart-card">
+                        <div class="card-header">
+                            <h3>Complaints by Type</h3>
+                            <p class="text-muted">Distribution of complaints by category</p>
+                        </div>
+                        <div class="card-content">
+                            <canvas id="complaint-types-chart"></canvas>
+                        </div>
+                    </div>
+                    <div class="chart-card">
+                        <div class="card-header">
+                            <h3>Department Performance</h3>
+                            <p class="text-muted">Resolution rates by department</p>
+                        </div>
+                        <div class="card-content">
+                            <canvas id="department-performance-chart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="recent-complaints">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>Recent Complaints</h3>
+                            <p class="text-muted">Most recently submitted complaints</p>
+                        </div>
+                        <div class="card-content">
+                            <div class="tabs">
+                                <div class="tab-buttons">
+                                    <button class="tab-btn active" data-tab="all">All</button>
+                                    <button class="tab-btn" data-tab="pending">Pending</button>
+                                    <button class="tab-btn" data-tab="in-progress">In Progress</button>
+                                    <button class="tab-btn" data-tab="resolved">Resolved</button>
+                                </div>
+                                <div class="tab-content active" id="all-tab">
+                                    <div id="all-complaints-list" class="complaints-list">
+                                        <!-- Complaints will be loaded here -->
+                                    </div>
+                                </div>
+                                <div class="tab-content" id="pending-tab">
+                                    <div id="pending-complaints-list" class="complaints-list">
+                                        <!-- Pending complaints will be loaded here -->
+                                    </div>
+                                </div>
+                                <div class="tab-content" id="in-progress-tab">
+                                    <div id="in-progress-complaints-list" class="complaints-list">
+                                        <!-- In progress complaints will be loaded here -->
+                                    </div>
+                                </div>
+                                <div class="tab-content" id="resolved-tab">
+                                    <div id="resolved-complaints-list" class="complaints-list">
+                                        <!-- Resolved complaints will be loaded here -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-footer">
+                            <a href="complaints.html" class="btn btn-outline btn-block">View All Complaints</a>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <div id="toast" class="toast"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="../js/data.js"></script>
+    <script src="../js/auth-check.js"></script>
+    <script src="../js/lgu-dashboard.js"></script>
+</body>
+</html>
