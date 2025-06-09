@@ -93,8 +93,8 @@ async function formChecker() {
 async function locationProximity() {
   const point1 = turf.point([longitude, latitude]);
   const { data: dataPoints, error } = await supabase
-    .from("")
-    .select("complaintID,coordinates");
+    .from("complaints")
+    .select("coordinates");
   if (error) {
     //tentative lang
     return false;
@@ -110,13 +110,47 @@ async function locationProximity() {
   return false;
 }
 
-function timeWindowChecking() {
-    //comparing time
+async function timeWindowChecking() {
+  //comparing time
+  const submissionTime = Date.now();
+  const { data: submissionTimeList, error: retrievalError } = await supabase
+    .from("complaints")
+    .select("submissionTime");
+  if (retrievalError) {
+    return false;
+  }
+  for (const time in submissionTimeList) {
+    const diff = (time.submissionTime - submissionTime) / (1000 * 60);
+    if (time.submissionTime >= submissionTime && diff <= 30) {
+      return true;
+    }
+  }
   return false;
 }
 
-function titleAndDescriptionSimilarities() {
-    //likeness scoring
+async function titleAndDescriptionSimilarities() {
+  //likeness scoring
+  const score = 0;
+  const currentTitle = title.value.toLowerCase();
+  const currentDescription = description.value.toLowerCase();
+  const { data, error: retrievalError } = await supabase
+    .from("")
+    .select("title,description");
+  if (retrievalError) {
+    //error
+  }
+  for (const x in data.title) {
+    const w = x.toLowerCase();
+    const a = stringSimilarity.compareTwoString(w, currentTitle);
+    if (a > 0.55) {
+    }
+  }
+  for (const y in data.description) {
+    const z = y.toLowerCase();
+    const b = stringSimilarity.compareTwoString(z, currentDescription);
+    if (b > 0.55) {
+    }
+  }
   return false;
 }
 

@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>String Similarity Example</title>
+  <script src="https://cdn.jsdelivr.net/npm/string-similarity/umd/string-similarity.min.js"></script>
+</head>
+<body>
+  <script>
+    const similarity = stringSimilarity.compareTwoStrings('hEllo'.toLocaleLowerCase(), 'hello');
+    console.log('Similarity:', similarity); // e.g., 0.55
+
+    const bestMatch = stringSimilarity.findBestMatch('hello', ['hi', 'hello world', 'hey']);
+    console.log('Best match:', bestMatch.bestMatch);
+  </script>
+</body>
+</html>
