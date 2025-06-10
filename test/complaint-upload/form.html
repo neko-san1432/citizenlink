@@ -5,15 +5,17 @@
     <script type="module" src="./js/upload.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@turf/turf@6/turf.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/string-similarity/umd/string-similarity.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/dompurify@3.0.2/dist/purify.min.js"></script>
+    <script type="module" src="./js/subcategoryInit.js"></script>
     <title>Complaint upload/show/etc</title>
   </head>
   <body>
     <div id="1">
       <!-- stats -->
     </div>
-    <div id="2">
-      <form id="complaint-form">
-        <input type="text" id="complaint-title" />
+    <div id="2" style="display: flex; flex-direction: column;width:100vw;height:100vh;align-items: center;justify-content: center;">
+      <form id="complaint-form" style="display: flex; flex-direction: column;">
+        <input type="text" id="complaint-title" placeholder="Complaint title"/>
         <label for="complaint-type">Complaint Type</label>
         <select id="complaint-type" name="type" required>
           <option value="" disabled selected>Select complaint type</option>
@@ -27,7 +29,6 @@
         <label for="complaint-subcategory">Subcategory</label>
         <select id="complaint-subcategory" name="subcategory" required>
           <option value="" disabled selected>Select subcategory</option>
-          <!-- Options will be populated based on complaint type -->
         </select>
         <input type="text" id="complaint-description" />
         <label for="complaint-urgency">Urgency Level</label>
@@ -56,9 +57,9 @@
           placeholder="Enter the address or location of the issue"
           required
         />
-        <label for="complaint-photo">Upload Photo (Optional)</label>
-        <input type="file" id="complaint-photo" name="photo" accept="image/*" />
-        <p class="text-muted">Max file size: 5MB</p>
+        <div id = "imagesPlaceholder"></div>        <label for="complaint-photo">Upload Photos (Optional)</label>
+        <input type="file" id="complaint-photo" name="photo" accept="image/*" multiple />
+        <p class="text-muted">Max file size: 5MB per image</p>
         <div>
           <button type="button" id="cancel-btn">Cancel</button>
           <button type="submit">Submit Complaint</button>
