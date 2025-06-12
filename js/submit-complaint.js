@@ -1,3 +1,9 @@
+import { supabase } from "./api/database";
+import { sanitizeInput, validateFileUpload } from './utils/security';
+
+let currentLatitude = null;
+let currentLongitude = null;
+
 document.addEventListener('DOMContentLoaded', () => {
   // Get user
   const user = checkAuth();
@@ -41,6 +47,51 @@ function addComplaint(complaintData) {
   complaints.push(newComplaint);
   localStorage.setItem('complaints', JSON.stringify(complaints));
   return newComplaint;
+}
+
+// Get user's location
+async function getLocation() {
+  return new Promise((resolve, reject) => {
+    if ("geolocation" in navigator) {
+      navigator.geolocation.getCurrentPosition(
+        position => {
+          currentLatitude = position.coords.latitude;
+          currentLongitude = position.coords.longitude;
+          resolve({ lat: currentLatitude, long: currentLongitude });
+        },
+        error => {
+          console.error('Location error:', error);
+          reject(error);
+        }
+      );
+    } else {
+      reject(new Error('Geolocation not supported'));
+    }
+  });
+}
+
+// Handle file uploads
+async function handleFileUploads(complaintID) {
+  const photoInput = document.getElementById('complaint-photo');
+  const files = photoInput.files;
+
+  for (let file of files) {
+    try {
+      // Validate file
+      validateFileUpload(file);
+
+      const fileName = `${complaintID}/${Date.now()}-${file.name}`;
+      const { error: uploadError } = await supabase.storage
+        .from('complaint-evidence')
+        .upload(fileName, file);
+
+      if (uploadError) throw uploadError;
+
+    } catch (error) {
+      console.error('File upload error:', error);
+      throw error;
+    }
+  }
 }
 
 // Setup complaint form
@@ -109,7 +160,7 @@ function setupComplaintForm(user) {
 }
 
 // Submit complaint to localStorage
-function submitComplaint(formData) {
+async function submitComplaint(formData) {
   // Add complaint to localStorage
   const newComplaint = addComplaint(formData);
   
@@ -124,3 +175,70 @@ function submitComplaint(formData) {
     showToast('Failed to submit complaint. Please try again.', 'error');
   }
 }
+
+// Submit complaint form
+async function submitComplaint(event) {
+  event.preventDefault();
+  
+  try {
+    const title = sanitizeInput(document.getElementById('complaint-title').value);
+    const description = sanitizeInput(document.getElementById('complaint-description').value);
+    const location = sanitizeInput(document.getElementById('complaint-location').value);
+    const category = document.getElementById('complaint-type').value;
+    const subCategory = document.getElementById('sub-category').value;
+    const urgency = document.getElementById('urgency-level').value;
+    const suggestedUnit = document.getElementById('suggested-unit').value;
+
+    // Get current location if not set
+    if (!currentLatitude || !currentLongitude) {
+      try {
+        await getLocation();
+      } catch (error) {
+        console.warn('Unable to get location:', error);
+      }
+    }
+
+    const { data: complaint, error: complaintError } = await supabase
+      .from('complaints')
+      .insert([
+        {
+          title,
+          description,
+          location,
+          userLoc: currentLatitude && currentLongitude 
+            ? { lat: currentLatitude, long: currentLongitude }
+            : null,
+          category,
+          subCategory,
+          suggestDisp: suggestedUnit,
+          urgency,
+          status: 'pending'
+        }
+      ])
+      .select()
+      .single();
+
+    if (complaintError) throw complaintError;
+
+    // Handle file uploads
+    const photoInput = document.getElementById('complaint-photo');
+    if (photoInput.files.length > 0) {
+      await handleFileUploads(complaint.complaintID);
+    }
+
+    showToast('Complaint submitted successfully!');
+    setTimeout(() => {
+      window.location.href = '/citizen/my-complaints.html';
+    }, 1500);
+
+  } catch (error) {
+    console.error('Submission error:', error);
+    showToast(error.message || 'Error submitting complaint. Please try again.', 'error');
+  }
+}
+
+// Initialize form
+document.getElementById('complaint-form').addEventListener('submit', submitComplaint);
+
+// Get initial location
+getLocation().catch(console.warn);

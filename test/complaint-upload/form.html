@@ -9,13 +9,48 @@
     <script type="module" src="./js/subcategoryInit.js"></script>
     <title>Complaint upload/show/etc</title>
   </head>
-  <body>
-    <div id="1">
-      <!-- stats -->
+  <body
+    style="
+      display: flex;
+      flex-direction: row;
+      width: 100vw;
+      height: 100vh;
+      margin: 0;
+      padding: 0;
+    "
+  >
+    <div
+      id="1"
+      style="
+        display: flex;
+        flex-direction: column;
+        width: 50%;
+        height: 100vh;
+        align-items: center;
+        justify-content: center;
+      "
+    >
+    <div id="complaintList">
+      <button id = "close"></button>
     </div>
-    <div id="2" style="display: flex; flex-direction: column;width:100vw;height:100vh;align-items: center;justify-content: center;">
-      <form id="complaint-form" style="display: flex; flex-direction: column;">
-        <input type="text" id="complaint-title" placeholder="Complaint title"/>
+    <div id="complaintShow">
+      
+    </div>
+      <!-- admin side -->
+    </div>
+    <div
+      id="2"
+      style="
+        display: flex;
+        flex-direction: column;
+        width: 50%;
+        height: 100vh;
+        align-items: center;
+        justify-content: center;
+      "
+    >
+      <form id="complaint-form" style="display: flex; flex-direction: column">
+        <input type="text" id="complaint-title" placeholder="Complaint title" />
         <label for="complaint-type">Complaint Type</label>
         <select id="complaint-type" name="type" required>
           <option value="" disabled selected>Select complaint type</option>
@@ -57,8 +92,15 @@
           placeholder="Enter the address or location of the issue"
           required
         />
-        <div id = "imagesPlaceholder"></div>        <label for="complaint-photo">Upload Photos (Optional)</label>
-        <input type="file" id="complaint-photo" name="photo" accept="image/*" multiple />
+        <div id="imagesPlaceholder"></div>
+        <label for="complaint-photo">Upload Photos (Optional)</label>
+        <input
+          type="file"
+          id="complaint-photo"
+          name="photo"
+          accept="image/*"
+          multiple
+        />
         <p class="text-muted">Max file size: 5MB per image</p>
         <div>
           <button type="button" id="cancel-btn">Cancel</button>

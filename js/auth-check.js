@@ -1,27 +1,41 @@
-// Check if user is logged in
-function checkAuth() {
-  const user = JSON.parse(localStorage.getItem('user'));
-  
-  if (!user) {
-    // Redirect to login page
-    window.location.href = '../login.html';
-    return null;
+import { supabase } from "./api/database";
+import { secureStorage } from './utils/security';
+
+// Check authentication and role
+async function checkAuth() {
+  try {
+    const session = await supabase.auth.getSession();
+    
+    if (!session?.data?.session) {
+      window.location.href = '/login.html';
+      return;
+    }
+
+    const userSession = secureStorage.getItem('user_session');
+    
+    if (!userSession || Date.now() - userSession.timestamp > 24 * 60 * 60 * 1000) {
+      // Session expired or invalid
+      secureStorage.removeItem('user_session');
+      window.location.href = '/login.html';
+      return;
+    }
+
+    // Check if user is on the correct dashboard
+    const currentPath = window.location.pathname;
+    const isLguPath = currentPath.startsWith('/lgu/');
+    const isCitizenPath = currentPath.startsWith('/citizen/');
+
+    if ((isLguPath && userSession.role !== 'lgu') || 
+        (isCitizenPath && userSession.role !== 'citizen')) {
+      window.location.href = userSession.role === 'lgu' ? '/lgu/dashboard.html' : '/citizen/dashboard.html';
+      return;
+    }
+
+    return userSession;
+  } catch (error) {
+    console.error('Auth check error:', error);
+    window.location.href = '/login.html';
   }
-  
-  // Check if on the correct platform
-  const currentPath = window.location.pathname;
-  
-  if (user.type === 'citizen' && !currentPath.includes('/citizen/')) {
-    window.location.href = '../citizen/dashboard.html';
-    return null;
-  }
-  
-  if (user.type === 'lgu' && !currentPath.includes('/lgu/')) {
-    window.location.href = '../lgu/dashboard.html';
-    return null;
-  }
-  
-  return user;
 }
 
 // Update UI with user info
@@ -38,16 +52,15 @@ function updateUserInfo(user) {
 // Handle logout
 function setupLogout() {
   const logoutBtn = document.getElementById('logout-btn');
-  
   if (logoutBtn) {
-    logoutBtn.addEventListener('click', (e) => {
-      e.preventDefault();
-      
-      // Clear user from localStorage
-      localStorage.removeItem('user');
-      
-      // Redirect to login page
-      window.location.href = '../login.html';
+    logoutBtn.addEventListener('click', async () => {
+      try {
+        await supabase.auth.signOut();
+        secureStorage.removeItem('user_session');
+        window.location.href = '/login.html';
+      } catch (error) {
+        console.error('Logout error:', error);
+      }
     });
   }
 }
@@ -141,8 +154,8 @@ function showToast(message, type = 'success') {
 }
 
 // Initialize page
-document.addEventListener('DOMContentLoaded', () => {
-  const user = checkAuth();
+document.addEventListener('DOMContentLoaded', async () => {
+  const user = await checkAuth();
   
   if (user) {
     updateUserInfo(user);

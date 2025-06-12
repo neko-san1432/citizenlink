@@ -2,11 +2,69 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta http-equiv="Content-Security-Policy" 
+          content="default-src 'self';
+                   script-src 'self' https://cdnjs.cloudflare.com;
+                   style-src 'self' https://cdnjs.cloudflare.com;
+                   img-src 'self' data: https:;
+                   font-src 'self' https://cdnjs.cloudflare.com;
+                   connect-src 'self' https://lspscscjmfcywoakgrtf.supabase.co" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sign Up - CitizenLink</title>
-    <link rel="stylesheet" href="css/styles.css">
+    <title>Sign Up - CitizenLink</title>    <link rel="stylesheet" href="css/styles.css">
     <link rel="stylesheet" href="../css/additional-styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+      .phone-input-group {
+        display: flex;
+        align-items: center;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        overflow: hidden;
+      }
+      
+      .phone-prefix {
+        background: #f5f5f5;
+        padding: 8px 12px;
+        border-right: 1px solid #ddd;
+        color: #666;
+      }
+      
+      #phone {
+        border: none;
+        flex: 1;
+        padding: 8px;
+        outline: none;
+      }
+      
+      .phone-input-group:focus-within {
+        border-color: #007bff;
+      }
+      
+      .input-hint {
+        color: #666;
+        font-size: 0.8em;
+        margin-top: 4px;
+        display: block;
+      }
+      
+      .verification-section {
+        display: none;
+        margin-top: 15px;
+        padding-top: 15px;
+        border-top: 1px solid #eee;
+      }
+
+      .verification-section.active {
+        display: block;
+      }
+
+      .resend-otp {
+        color: #007bff;
+        text-decoration: underline;
+        cursor: pointer;
+        margin-left: 10px;
+      }
+    </style>
 </head>
 <body class="auth-page">
     <div class="auth-container">
@@ -22,29 +80,66 @@
                 <div class="card-header">
                     <h2>Create an Account</h2>
                     <p>Sign up for a citizen account to submit and track complaints.</p>
-                </div>
+                </div>        
+                <br>        
                 <form id="signup-form">
                     <div class="form-group">
                         <label for="fullName">Full Name</label>
                         <input type="text" id="fullName" name="fullName" placeholder="Enter your full name" required>
                     </div>
                     <div class="form-group">
-                        <label for="email">Email</label>
-                        <input type="email" id="email" name="email" placeholder="Enter your email" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="username">Username</label>
-                        <input type="text" id="username" name="username" placeholder="Choose a username" required>
+                        <label for="phone">Phone Number</label>
+                        <div class="phone-input-group">
+                            <span class="phone-prefix">+63</span>
+                            <input
+                                type="tel"
+                                id="phone"
+                                name="phone"
+                                placeholder="9XXXXXXXXX"
+                                pattern="[9][0-9]{9}"
+                                maxlength="10"
+                                required
+                            />
+                        </div>
+                        <small class="input-hint">Enter 10 digits starting with 9</small>
                     </div>
                     <div class="form-group">
                         <label for="password">Password</label>
-                        <input type="password" id="password" name="password" placeholder="Create a password" required>
+                        <input 
+                            type="password" 
+                            id="password" 
+                            name="password" 
+                            placeholder="Create a password" 
+                            required
+                        >
                     </div>
                     <div class="form-group">
                         <label for="confirmPassword">Confirm Password</label>
-                        <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Confirm your password" required>
+                        <input 
+                            type="password" 
+                            id="confirmPassword" 
+                            name="confirmPassword" 
+                            placeholder="Confirm your password" 
+                            required
+                        >
                     </div>
-                    <button type="submit" class="btn btn-primary btn-block">Sign Up</button>
+                    <button type="submit" class="btn btn-primary btn-block">Continue</button>
+                    
+                    <div id="verification-section" class="verification-section">
+                        <div class="form-group">
+                            <label for="otp">Enter OTP</label>
+                            <input 
+                                type="text" 
+                                id="otp" 
+                                name="otp" 
+                                placeholder="Enter 6-digit OTP" 
+                                pattern="[0-9]{6}" 
+                                maxlength="6"
+                            >
+                            <small class="input-hint">OTP sent to your phone number <span id="resend-otp" class="resend-otp">Resend OTP</span></small>
+                        </div>
+                        <button type="button" id="verify-otp" class="btn btn-primary btn-block">Verify & Create Account</button>
+                    </div>
                     <div class="auth-footer">
                         <p>Already have an account? <a href="login.html">Log in</a></p>
                     </div>

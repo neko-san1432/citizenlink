@@ -98,13 +98,12 @@ async function validateFile(file) {
     console.error("File validation error:", error);
     return false;
   }
-
-  // Time check
-  const timeDifference = (Date.now() - file.lastModified) / (1000 * 60 * 60);  if (timeDifference > 1) {
-    // TODO: Replace with proper error dialog explaining time restriction and suggesting to take a new photo
-    alert(`File must be less than 1 hour old`);
-    return false;
-  }
+  // Time check - temporarily disabled
+  // const timeDifference = (Date.now() - file.lastModified) / (1000 * 60 * 60);
+  // if (timeDifference > 1) {
+  //   alert(`File must be less than 1 hour old`);
+  //   return false;
+  // }
 
   return true;
 }
