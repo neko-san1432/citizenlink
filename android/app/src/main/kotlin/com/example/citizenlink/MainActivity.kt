@@ -1,4 +1,4 @@
-package com.example.citizenlink_app
+package com.example.citizenlink
 
 import io.flutter.embedding.android.FlutterActivity
 
