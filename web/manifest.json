@@ -1,6 +1,6 @@
 {
-    "name": "citizenlink_app",
-    "short_name": "citizenlink_app",
+    "name": "citizenlink",
+    "short_name": "citizenlink",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
